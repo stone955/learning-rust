@@ -1,4 +1,5 @@
-use std::{env, error::Error, fs, process};
+use minigrep::{run, Config};
+use std::{env, process};
 
 fn main() {
     // 迭代1:基本功能
@@ -47,7 +48,11 @@ fn main() {
             process::exit(1);
         });
 
-        println!("Searching for {} from {}", config.query, config.file_path);
+        println!(
+            "Searching for {} from {}",
+            config.query(),
+            config.file_path()
+        );
 
         // 分离主体逻辑, 处理返回的错误
         if let Err(err) = run(config) {
@@ -55,48 +60,4 @@ fn main() {
             process::exit(1);
         }
     }
-}
-
-struct Config {
-    query: String,
-    file_path: String,
-}
-
-impl Config {
-    // 返回 Result 来替代直接 panic
-    fn build(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 3 {
-            return Err("not enough arguments");
-        }
-
-        let query = args[1].clone();
-        let file_path = args[2].clone();
-
-        Ok(Config { query, file_path })
-    }
-}
-
-// impl Config {
-//     fn from(args: &[String]) -> Config {
-//         let query = args[1].clone();
-//         let file_path = args[2].clone();
-
-//         Config { query, file_path }
-//     }
-// }
-
-// fn parse_config(args: &[String]) -> Config {
-//     let query = args[1].clone();
-//     let file_path = args[2].clone();
-
-//     Config { query, file_path }
-// }
-
-fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    // 读取文件
-    let content = fs::read_to_string(config.file_path)?;
-
-    println!("With text:\n{}", content);
-
-    Ok(())
 }
