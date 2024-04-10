@@ -1,4 +1,4 @@
-use std::{env, fs};
+use std::{env, fs, process};
 
 fn main() {
     // 迭代1:基本功能
@@ -40,7 +40,12 @@ fn main() {
         // 分离命令行解析
         // let config = parse_config(&args);
         // 聚合配置变量
-        let config = Config::from(&args);
+        // let config = Config::from(&args);
+        // 处理返回的 Result
+        let config = Config::build(&args).unwrap_or_else(|err| {
+            println!("Problem parsing arguments: {}", err);
+            process::exit(1);
+        });
 
         println!("Searching for {} from {}", config.query, config.file_path);
 
@@ -58,13 +63,27 @@ struct Config {
 }
 
 impl Config {
-    fn from(args: &[String]) -> Config {
+    // 返回 Result 来替代直接 panic
+    fn build(args: &[String]) -> Result<Config, &'static str> {
+        if args.len() < 3 {
+            return Err("not enough arguments");
+        }
+
         let query = args[1].clone();
         let file_path = args[2].clone();
 
-        Config { query, file_path }
+        Ok(Config { query, file_path })
     }
 }
+
+// impl Config {
+//     fn from(args: &[String]) -> Config {
+//         let query = args[1].clone();
+//         let file_path = args[2].clone();
+
+//         Config { query, file_path }
+//     }
+// }
 
 // fn parse_config(args: &[String]) -> Config {
 //     let query = args[1].clone();
