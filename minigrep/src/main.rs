@@ -1,4 +1,4 @@
-use std::{env, fs, process};
+use std::{env, error::Error, fs, process};
 
 fn main() {
     // 迭代1:基本功能
@@ -49,11 +49,11 @@ fn main() {
 
         println!("Searching for {} from {}", config.query, config.file_path);
 
-        // 读取文件
-        let content =
-            fs::read_to_string(config.file_path).expect("Should have been able to read the file");
-
-        println!("With text:\n{}", content);
+        // 分离主体逻辑, 处理返回的错误
+        if let Err(err) = run(config) {
+            println!("Application error: {}", err);
+            process::exit(1);
+        }
     }
 }
 
@@ -91,3 +91,12 @@ impl Config {
 
 //     Config { query, file_path }
 // }
+
+fn run(config: Config) -> Result<(), Box<dyn Error>> {
+    // 读取文件
+    let content = fs::read_to_string(config.file_path)?;
+
+    println!("With text:\n{}", content);
+
+    Ok(())
+}
