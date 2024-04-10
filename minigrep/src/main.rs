@@ -38,20 +38,37 @@ fn main() {
         let args: Vec<String> = env::args().collect();
 
         // 分离命令行解析
-        let (query, file_path) = parse_config(&args);
+        // let config = parse_config(&args);
+        // 聚合配置变量
+        let config = Config::from(&args);
 
-        println!("Searching for {} from {}", query, file_path);
+        println!("Searching for {} from {}", config.query, config.file_path);
 
         // 读取文件
         let content =
-            fs::read_to_string(file_path).expect("Should have been able to read the file");
+            fs::read_to_string(config.file_path).expect("Should have been able to read the file");
 
         println!("With text:\n{}", content);
     }
 }
 
-fn parse_config(args: &[String]) -> (&str, &str) {
-    let query = &args[1];
-    let file_path = &args[2];
-    (query, file_path)
+struct Config {
+    query: String,
+    file_path: String,
 }
+
+impl Config {
+    fn from(args: &[String]) -> Config {
+        let query = args[1].clone();
+        let file_path = args[2].clone();
+
+        Config { query, file_path }
+    }
+}
+
+// fn parse_config(args: &[String]) -> Config {
+//     let query = args[1].clone();
+//     let file_path = args[2].clone();
+
+//     Config { query, file_path }
+// }
