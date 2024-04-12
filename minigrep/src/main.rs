@@ -50,8 +50,8 @@ fn main() {
 
         println!(
             "Searching for {} from {}",
-            config.query(),
-            config.file_path()
+            config.query,
+            config.file_path
         );
 
         // 分离主体逻辑, 处理返回的错误
