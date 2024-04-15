@@ -44,7 +44,8 @@ fn main() {
         // let config = Config::from(&args);
         // 处理返回的 Result
         let config = Config::build(&args).unwrap_or_else(|err| {
-            println!("Problem parsing arguments: {}", err);
+            // 重定向错误信息的输出
+            eprintln!("Problem parsing arguments: {}", err);
             process::exit(1);
         });
 
@@ -56,7 +57,8 @@ fn main() {
 
         // 分离主体逻辑, 处理返回的错误
         if let Err(err) = run(config) {
-            println!("Application error: {}", err);
+            // 重定向错误信息的输出
+            eprintln!("Application error: {}", err);
             process::exit(1);
         }
     }
